@@ -9,6 +9,8 @@ ConfigureServices(builder.Services);
 void ConfigureServices(IServiceCollection services)//add sigleton un muadili
 {
     services.AddTransient<IUsersService, UsersService>();
+    services.AddHttpClient<IUsersService, UsersService>();
+
 }
 
 builder.Services.AddControllers();
