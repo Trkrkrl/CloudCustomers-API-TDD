@@ -2,6 +2,7 @@
 using CloudCustomers.API.Services;
 using CloudCustomers.UnitTests.Fixtures;
 using CloudCustomers.UnitTests.Helpers;
+using FluentAssertions;
 using Moq;
 using Moq.Protected;
 using System;
@@ -24,8 +25,8 @@ namespace CloudCustomers.UnitTests.Systems.Services
             var expectedResponse = UsersFixture.GetTestUsers();//fixture deki kulllanıcıalrı expected response a tanımlıyoz, bunu da alttaki methoda veriyoz
             
             var handlerMock = MockHttpMessageHandler<User>.SetupBasicGetResourceList(expectedResponse);//bu methodda mock messagehandlerda alıp bakıyor ve bize bir  handlermock dönüyor
-            var //bu handlermock u aşağıda http client a verelim - usersercie ye uygun parçasını alsın
-                httpClient = new HttpClient(handlerMock.Object);
+                                                                                                       //bu handlermock u aşağıda http client a verelim - usersercie ye uygun parçasını alsın
+            var httpClient = new HttpClient(handlerMock.Object);
             var sut= new UsersService(httpClient);
 
             //Act
@@ -48,7 +49,23 @@ namespace CloudCustomers.UnitTests.Systems.Services
 
 
         }
-            
+        [Fact]
+        public async Task GetAllUsers_WhenCalled_ReturnListOfUsers()
+        {//Bu  testi geçerr çünkü boş bir list of users dönüyoruz, userserviceye bakarsan görürsün
+            //Arrange
+            var expectedResponse = UsersFixture.GetTestUsers();
+
+            var handlerMock = MockHttpMessageHandler<User>.SetupBasicGetResourceList(expectedResponse);
+            var httpClient = new HttpClient(handlerMock.Object);
+            var sut = new UsersService(httpClient);
+            //Act
+            var result =await sut.GetAllUsers();
+
+            //Assert
+            result.Should().BeOfType<List<User>>();
+
+        }
+
 
     }
 }
